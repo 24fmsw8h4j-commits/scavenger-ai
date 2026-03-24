@@ -1,0 +1,25 @@
+name: Weekly Stale Triage
+
+on:
+  schedule:
+    - cron: "0 13 * * 1"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          stale-issue-label: status:stale
+          days-before-stale: 14
+          days-before-close: -1
+          stale-issue-message: >-
+            Automated triage: this issue appears stale. Please post an update,
+            next owner, or unblock plan.
+          exempt-issue-labels: priority:p0,status:blocked,goal:quarterly
+          operations-per-run: 500
