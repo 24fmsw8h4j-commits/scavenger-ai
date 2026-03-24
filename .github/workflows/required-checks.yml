@@ -1,0 +1,50 @@
+name: Required Checks
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint
+        run: |
+          if [ -f package.json ] && npm run | grep -q " lint"; then
+            npm ci
+            npm run lint
+          else
+            echo "No lint script configured; passing lint guard."
+          fi
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test
+        run: |
+          if [ -f package.json ] && npm run | grep -q " test"; then
+            npm ci
+            npm test -- --watch=false || npm test
+          else
+            echo "No test script configured; passing test guard."
+          fi
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: |
+          if [ -f package.json ] && npm run | grep -q " build"; then
+            npm ci
+            npm run build
+          else
+            echo "No build script configured; passing build guard."
+          fi
